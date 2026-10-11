@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>中亚数字自主观察</title>
+<style>
+/* Layout: 档案卷宗式 — 顶部研究主线 + 粘性标签栏 + 单列卡片/时间轴；地图蓝与草原金双色 */
+:root{
+  --bg:#F3F6F8; --surface:#FFFFFF; --ink:#132A3A; --muted:#5A6C78; --line:#D9E1E7;
+  --sky:#0089A8; --sky-soft:#DDF0F5; --gold:#B07F00; --gold-soft:#F8EDCC;
+  --red:#B4492F; --red-soft:#F6E0DA; --green:#2E7D66; --green-soft:#DDF0E8;
+  --chip:#EDF1F4;
+  --f-display:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC",serif;
+  --f-body:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Hiragino Sans GB",system-ui,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1D27; --surface:#162834; --ink:#E6EEF3; --muted:#9AB0BE; --line:#26404F;
+  --sky:#3CC3E0; --sky-soft:#173E4B; --gold:#E7B83A; --gold-soft:#3D3315; --red:#E58A72; --red-soft:#43261F;
+  --green:#5CC9A6; --green-soft:#183D33; --chip:#1E3442; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1D27; --surface:#162834; --ink:#E6EEF3; --muted:#9AB0BE; --line:#26404F;
+  --sky:#3CC3E0; --sky-soft:#173E4B; --gold:#E7B83A; --gold-soft:#3D3315; --red:#E58A72; --red-soft:#43261F;
+  --green:#5CC9A6; --green-soft:#183D33; --chip:#1E3442; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.65;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px}
+header{padding-block:36px 20px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--sky);font-weight:700}
+h1{font-family:var(--f-display);font-size:clamp(28px,5vw,42px);line-height:1.2;margin:6px 0 10px;text-wrap:balance}
+.thesis{font-size:17px;max-width:62ch;color:var(--muted);margin:0}
+.thesis b{color:var(--ink)}
+.spine{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:22px}
+.spine div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.spine h3{margin:0 0 4px;font-size:13px;letter-spacing:.08em;color:var(--muted)}
+.spine p{margin:0;font-size:14px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:8px}
+.tabs button{flex:none;font:inherit;font-size:14px;border:0;background:none;color:var(--muted);padding:7px 12px;border-radius:8px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);font-weight:600}
+.tabs button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+main{padding-block:22px 60px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+.bar input,.bar select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
+.bar input{flex:1 1 220px}
+.count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.btn{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn.primary{background:var(--sky);border-color:var(--sky);color:var(--bg);font-weight:600}
+h2{font-family:var(--f-display);font-size:24px;margin:0 0 6px}
+.lede{color:var(--muted);margin:0 0 18px;max-width:68ch}
+/* timeline */
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.ev{display:grid;grid-template-columns:96px 1fr;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.ev time{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.ev h4{margin:0 0 4px;font-size:15.5px;line-height:1.5}
+.ev p{margin:0 0 8px;font-size:14px;color:var(--muted)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px}
+.chip{padding:2px 9px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap}
+.t-dep{background:var(--sky-soft);color:var(--sky)} .t-rule{background:var(--gold-soft);color:var(--gold)}
+.t-path{background:var(--red-soft);color:var(--red)} .t-unite{background:var(--green-soft);color:var(--green)}
+.conf{font-weight:600}
+.src{color:var(--sky);text-decoration:none;font-size:12px} .src:hover{text-decoration:underline}
+.mine{border-style:dashed}
+/* tables */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.06em;color:var(--muted);font-weight:600;background:var(--chip)}
+tr:last-child td{border-bottom:0}
+.sig{display:inline-flex;gap:3px} .sig i{width:8px;height:14px;border-radius:2px;background:var(--line)} .sig i.on{background:var(--gold)}
+/* grid cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.card h3{margin:0;font-size:18px;font-family:var(--f-display)}
+.card p{margin:0;font-size:14px}
+.card .k{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.big{font-family:var(--f-display);font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.verdict{font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;align-self:flex-start}
+.v-yes{background:var(--green-soft);color:var(--green)} .v-part{background:var(--gold-soft);color:var(--gold)} .v-wait{background:var(--chip);color:var(--muted)}
+.linkish{background:none;border:0;padding:0;font:inherit;font-size:13px;color:var(--sky);cursor:pointer;align-self:flex-start}
+/* form */
+details.add{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+details.add summary{cursor:pointer;font-weight:600}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.form input,.form select,.form textarea{font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.form .wide{grid-column:1/-1}
+textarea{min-height:90px}
+.note{font-size:13px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px}
+footer{border-top:1px solid var(--line);padding-block:18px 30px;font-size:13px;color:var(--muted)}
+@media (max-width:560px){.ev{grid-template-columns:1fr;gap:4px}}
+@media (prefers-reduced-motion:no-preference){.ev,.card{transition:border-color .15s}.ev:hover,.card:hover{border-color:var(--sky)}}
+</style>
+</head>
+<body>
+
+
+<header class="wrap">
+  <div class="eyebrow">个人战略态势数据库 · Exlime · 北京大学区域与国别研究院</div>
+  <h1>中亚数字自主观察</h1>
+  <p class="thesis"><b>技术栈可以进口，语义栈必须自建。</b>在中美两套 AI 技术栈同时嵌入的条件下，中等国家能否、以何种方式把“多向量依附”转化为数字自主？本库以哈萨克斯坦为主样本，持续追踪南北数字治理中的技术依附、规则失语、路径规训与联合自强。</p>
+  <div class="spine">
+    <div><h3>研究问题</h3><p>多向量依附如何转化为数字自主；决定变量是否在于语言、课程、数据标注组成的“语义层”。</p></div>
+    <div><h3>区域国别</h3><p>主：哈萨克斯坦。辅：乌、吉对照；土库曼斯坦作“不签约”参照。连接：中吉乌铁路、中间走廊、上合。</p></div>
+    <div><h3>研究主线</h3><p>情感基础设施 → 叙事走廊 → 地缘传播联动模型；延伸至 AI 时代的语义主权。</p></div>
+  </div>
+</header>
+
+<nav><div class="wrap tabs" role="tablist" id="tabs"></div></nav>
+<main class="wrap" id="main"></main>
+<footer class="wrap">
+  条目标注三档可信度：<b>已核验</b>（有公开来源链接）、<b>组会材料</b>（来自组会议题说明）、<b>待核验</b>（来自既往分析，引用前需复核）。最近更新：2026-10-11。
+</footer>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ================= 数据区：直接在这里增删条目即可永久更新 ================= */
+const LAYERS = {
+  dep:  {name:"技术依附", cls:"t-dep",  theory:"依附论（卡多佐、法莱托：联系性依附发展）", def:"算力、模型、光纤、云等关键环节由外部供给。供应商多元化降低单点风险，但不消除依附本身。", q:"哪些环节仍不可替代？替代成本有多高？"},
+  rule: {name:"规则失语", cls:"t-rule", theory:"南北治理议程分野", def:"北方以“风险—安全”设定议程，南方以“发展权”回应；南方立法速度快，但标准、评测与认证多为移植。", q:"南方国家在哪些机制里拥有提案权，而不只是席位？"},
+  path: {name:"路径规训", cls:"t-path", theory:"现代化理论的线性叙事", def:"“三年建成数字国家”式的跨越叙事，叠加外方打包方案，把发展路径预设为采纳率竞赛。", q:"谁定义“数字化成功”的指标？"},
+  unite:{name:"联合自强", cls:"t-unite",theory:"集体自力更生 / 南南合作", def:"通过多边与小多边平台把对冲变成席位，把席位变成规则，最终掌握语义层。", q:"联合行动是否形成可执行的机制与资金？"}
+};
+const EVENTS = [
+ {d:"2024-07",t:"哈政府通过《2024—2029年人工智能发展构想》",s:"提出建设国家AI平台、部署超算、建设数据中心与光纤体系。",c:"哈萨克斯坦",l:"path",conf:"已核验",src:"上外区域国别研究报告",u:"https://segg.sh.gov.cn/zxfw/rdgz/rgzn/20260613/eee4abfe97fd4d83ae423ae902544cf7/39f95fbe94f64101b8d580670bee5a54.pdf"},
+ {d:"2025-09",t:"托卡耶夫国情咨文把AI战略提升至“国家存续”高度",s:"宣布2026年为“数字化与人工智能发展年”。",c:"哈萨克斯坦",l:"path",conf:"已核验",src:"上外区域国别研究报告",u:"https://segg.sh.gov.cn/zxfw/rdgz/rgzn/20260613/eee4abfe97fd4d83ae423ae902544cf7/39f95fbe94f64101b8d580670bee5a54.pdf"},
+ {d:"2025",t:"设立人工智能与数字发展部",s:"副总理马季耶夫兼任部长，另设AI发展委员会。",c:"哈萨克斯坦",l:"rule",conf:"已核验",src:"Al Jazeera",u:"https://www.aljazeera.com/news/2026/9/21/inside-kazakhstans-push-to-become-a-regional-ai-centre"},
+ {d:"2025-11",t:"华盛顿C5+1期间与OpenAI签署教育合作备忘录",s:"三年内每年不少于16.5万个ChatGPT Edu许可提供给教师。",c:"哈萨克斯坦 / 美国",l:"dep",conf:"已核验",src:"哈AI与数字发展部",u:"https://www.gov.kz/memleket/entities/maidd/press/news/details/1100709?lang=en"},
+ {d:"2025-11",t:"Freedom Holding与英伟达、OpenAI结成伙伴",s:"计划在哈建设“中亚最大主权AI中心”。",c:"哈萨克斯坦 / 美国",l:"dep",conf:"已核验",src:"Kapital.kz",u:"https://kapital.kz/tehnology/145222/gde-timur-turlov-nameren-zapustit-centr-iskusstvennogo-intellekta-s-nvidia.html"},
+ {d:"2026-01",t:"哈《人工智能法》生效",s:"与数字法典共同构成哈数字转型的法律框架。",c:"哈萨克斯坦",l:"rule",conf:"已核验",src:"上外区域国别研究报告",u:"https://segg.sh.gov.cn/zxfw/rdgz/rgzn/20260613/eee4abfe97fd4d83ae423ae902544cf7/39f95fbe94f64101b8d580670bee5a54.pdf"},
+ {d:"2026-02",t:"哈入选OpenAI“教育国家计划”首批",s:"与新加坡、阿联酋等同批，全国推行ChatGPT Edu。",c:"哈萨克斯坦 / 美国",l:"path",conf:"已核验",src:"digitalbusiness.kz",u:"https://digitalbusiness.kz/2026-02-23/timur-turlov-rasskazal-kak-budut-raspredeleni-litsenzii-ot-openai-dlya-kazahstana/amp/"},
+ {d:"2026-05-04",t:"AI发展委员会第二次会议在阿拉木图举行",s:"李开复为国际委员；萨姆鲁克-卡泽纳要求旗下企业2026年以AI带动EBITDA提升5%。",c:"哈萨克斯坦",l:"path",conf:"已核验",src:"Samruk-Kazyna",u:"https://www.sk.kz/press-center/news/79047/?lang=en"},
+ {d:"2026-05",t:"托卡耶夫在突厥语国家组织峰会提出“突厥语AI网络”",s:"以语言共同体为单位的区域AI协同倡议。",c:"突厥语国家",l:"unite",conf:"已核验",src:"上外区域国别研究报告",u:"https://segg.sh.gov.cn/zxfw/rdgz/rgzn/20260613/eee4abfe97fd4d83ae423ae902544cf7/39f95fbe94f64101b8d580670bee5a54.pdf"},
+ {d:"2026-05",t:"欧亚国立大学鲁班工坊开放AI实训",s:"天津职业大学与欧亚大学共建，为哈第二所鲁班工坊。",c:"哈萨克斯坦 / 中国",l:"unite",conf:"已核验",src:"新华网",u:"https://www.news.cn/world/20260530/c290db46a4ce4dd1b500f87b98075988/c.html"},
+ {d:"2026-06",t:"英伟达与Firebird对哈算力投资100亿美元",s:"总理别克捷诺夫主持会见。",c:"哈萨克斯坦 / 美国",l:"dep",conf:"已核验",src:"the-tech.kz",u:"https://the-tech.kz/kto-iz-mirovyh-tehnogigantov-uzhe-sotrudnichaet-s-kazahstanom-i-kakie-ai-proekty-oni-razvivayut/"},
+ {d:"2026-06-11",t:"克拉玛依发布《中国—上合组织数字技术工具箱（2026）》",s:"整合数字基础设施、技术方案、赋能应用三类数字公共产品。",c:"上合组织",l:"unite",conf:"已核验",src:"央视新闻 / 同花顺",u:"https://news.10jqka.com.cn/20260611/c677381117.shtml"},
+ {d:"2026-07-16",t:"29国签署成立世界人工智能合作组织（WAICO）",s:"中亚四国为创始成员，土库曼斯坦未签；无G7或欧盟成员加入。",c:"中亚 / 全球南方",l:"unite",conf:"已核验",src:"Times of Central Asia",u:"https://timesca.com/tokayev-offers-astana-to-host-new-global-ai-bodys-first-meeting/"},
+ {d:"2026-07-16",t:"中哈签署70余份文件，总额逾150亿美元",s:"哈AI与数字发展部与华为建立战略伙伴关系；哈电信与亨通推进埃基巴斯图兹数据中心谷。",c:"哈萨克斯坦 / 中国",l:"dep",conf:"已核验",src:"Times of Central Asia",u:"https://timesca.com/tokayev-offers-astana-to-host-new-global-ai-bodys-first-meeting/"},
+ {d:"2026-07-17",t:"托卡耶夫提议阿斯塔纳承办WAICO首次会议",s:"同时提议在哈设立该组织中亚办公室。",c:"哈萨克斯坦",l:"unite",conf:"已核验",src:"Times of Central Asia",u:"https://timesca.com/tokayev-offers-astana-to-host-new-global-ai-bodys-first-meeting/"},
+ {d:"2026-09-15",t:"零一万物与Q.AI、哈教育部共建国家级AI教育平台",s:"乌鲁木齐上合数字经济论坛签约；“AI双师课堂”试点10所学校，2029年拟覆盖2900所。",c:"哈萨克斯坦 / 中国",l:"dep",conf:"已核验",src:"科技日报",u:"https://www.stdaily.com/web/gdxw/2026-09/16/content_582154.html"},
+ {d:"2026-09-21",t:"萨姆鲁克-卡泽纳董事会出现有投票权的AI“董事”SKAI",s:"AI从工具层进入国家资本的治理层。",c:"哈萨克斯坦",l:"path",conf:"已核验",src:"Al Jazeera",u:"https://www.aljazeera.com/news/2026/9/21/inside-kazakhstans-push-to-become-a-regional-ai-centre"},
+ {d:"2026-09-23",t:"联合国安理会举行人工智能与国际安全高级别会议",s:"发达国家侧重风险管控，发展中国家强调智能鸿沟与数字发展权。",c:"联合国",l:"rule",conf:"组会材料",src:"组会议题说明",u:""},
+ {d:"2026-09",t:"联大一般性辩论：新加坡等中等国家倡议联合国框架下的AI治理",s:"尝试跳出大国二元对立。",c:"联合国",l:"rule",conf:"组会材料",src:"组会议题说明",u:""},
+ {d:"2026-09-30",t:"2026全球南方现代化论坛在开罗举办",s:"主题“人工智能浪潮”；承接金砖第十八次会晤共识，转化为非洲、西亚落地议程。",c:"全球南方",l:"unite",conf:"组会材料",src:"组会议题说明",u:""},
+ {d:"2026-09-30",t:"人权理事会94国共同发声",s:"明确各国享有自主选择AI发展路径的权利，抵制技术霸权与数字壁垒。",c:"联合国",l:"rule",conf:"组会材料",src:"组会议题说明",u:""}
+];
+const HOT = [
+ {k:"WAICO首会选址与中亚办公室",now:"哈方已提议阿斯塔纳承办首会并设中亚办公室，尚无决定",who:"哈：争取席位；中：东道国总部；土库曼斯坦：未签约",sig:4,next:"WAICO首次全体会议筹备公告"},
+ {k:"哈AI教育“双栈同场”",now:"美方ChatGPT Edu全国铺开；中方双师课堂试点10校",who:"OpenAI/Freedom自上而下；零一万物/Q.AI自下而上",sig:5,next:"中方试点扩至500所；ChatGPT Edu第二年许可续签"},
+ {k:"哈语大模型与语义主权",now:"国家AI平台、哈语LLM项目推进中",who:"哈AI与数字发展部、Alem.ai",sig:3,next:"哈语模型评测结果、教材语料共建协议"},
+ {k:"突厥语AI网络",now:"2026.5峰会提出倡议，机制化程度待观察",who:"哈主导；土耳其、阿塞拜疆、乌兹别克斯坦",sig:2,next:"突厥语国家组织数字部长会议"},
+ {k:"跨里海光缆",now:"既往分析记目标2026年底投运（待核验）",who:"哈、阿塞拜疆；决定能否摆脱流量北向依赖",sig:3,next:"年底投运进度"},
+ {k:"南北AI治理议程分野",now:"安理会、人权理事会、开罗论坛呈现南方协同叙事",who:"北：风险与安全；南：发展权与路径自主",sig:4,next:"2027.5 联合国第二届全球AI治理对话（纽约）"}
+];
+const PAST = [
+ {d:"2025.12",topic:"美2025版《国家安全战略》",concept:"去意识形态化的情感供应链",judge:"美对华从价值观对抗转向利益博弈，流行文化可借“去政治化”包装进入全球市场。",v:"wait",vn:"待验证"},
+ {d:"2026.03",topic:"伊朗战争与哈梅内伊遇害",concept:"中间走廊冲击评估",judge:"伊朗动荡重塑中亚南向通道，中间走廊的战略分量上升。",v:"wait",vn:"待验证"},
+ {d:"2026.04",topic:"预测市场与情报金融化",concept:"反身性第五权",judge:"去中心化预测市场形成“定价—行为”反身性闭环，冲击认知主权。",v:"wait",vn:"待验证"},
+ {d:"2026.05",topic:"全球南方AI七日解读",concept:"中亚“电力—通道—人才”三维困局",judge:"中亚枢纽雄心超过能力；电力与光纤通道是首要瓶颈。",v:"part",vn:"部分印证",why:"7月埃基巴斯图兹数据中心谷落地，电力与算力绑定的思路得到体现。"},
+ {d:"2026.06",topic:"欧盟拦截俄油轮",concept:"子题化分工机制",judge:"大事件需拆分为法律、能源、军事、大国互动子题方能做实。",v:"yes",vn:"已采纳",why:"组会沿用“一个大主题 × 四个子题”结构。"},
+ {d:"2026.07",topic:"东盟系列会议",concept:"会内克制 / 会外升级",judge:"多边会议内文本克制，会外行动升级，两者结构同构。",v:"wait",vn:"待验证"},
+ {d:"2026.08",topic:"子题④ 全球南方AI战略自主",concept:"四类型 + 两边下注 + 制度桥梁",judge:"南方国家普遍在美中技术体系间组合式下注。",v:"yes",vn:"已印证",why:"9月哈萨克斯坦教育领域同时接入OpenAI与中方平台。"},
+ {d:"2026.09",topic:"大金砖与集体自强",concept:"接口而非集团",judge:"中亚把大金砖当作对接接口，不作为加入的阵营。",v:"wait",vn:"待验证"},
+ {d:"2026.10",topic:"南北数字治理",concept:"多向量依附 / 语义主权",judge:"依附从单中心转为多中心嵌套；自主取决于语义层控制。",v:"wait",vn:"本期新提"}
+];
+const THREE = [
+ {type:"学术文",cls:"t-dep",title:"多向量依附：哈萨克斯坦AI教育中的“双栈嵌套”与语义主权",arg:"南方中等国家的数字依附正从单中心转为多中心嵌套。供应商多元化不等于自主，自主取决于对语言、课程、数据标注的控制。",stage:"选题与框架",next:"补教师访谈；投跨学科期刊（教育技术或传播）"},
+ {type:"政策文",cls:"t-rule",title:"以“语义共建”深化中哈AI教育合作的对策建议",arg:"中美已在哈教育赛道同场且切入路径相反。合作重心应从交付设备转向哈语语料、课程与评测共建，并对接WAICO中亚办公室。",stage:"事实底稿已成",next:"成稿3000字以内，经院内渠道报送并跟踪反馈"},
+ {type:"社会文",cls:"t-unite",title:"一间哈萨克斯坦乡村教室里的中美AI",arg:"同一位乡村教师可能同时用上ChatGPT Edu和中方双师课堂，以一间教室讲清南北数字治理。",stage:"选题",next:"逐条核验事实；投澎湃"}
+];
+/* ================= 数据区结束 ================= */
+
+const KEY="cadb-mine-v1";
+function loadMine(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return[]}}
+function saveMine(a){try{localStorage.setItem(KEY,JSON.stringify(a));return true}catch(e){return false}}
+let mine=loadMine();
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=s=>document.querySelector(s);
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,2200)}
+const allEvents=()=>[...EVENTS,...mine.map(x=>({...x,mine:true}))].sort((a,b)=>b.d.localeCompare(a.d));
+
+const TABS=[["overview","总览"],["timeline","大事年表"],["hot","热点追踪"],["themes","主题库"],["past","既有分析"],["three","三体文"]];
+let state={tab:"overview",q:"",layer:"",country:""};
+try{const h=location.hash.slice(1);if(TABS.some(t=>t[0]===h))state.tab=h}catch(e){}
+
+function renderTabs(){
+  $("#tabs").innerHTML=TABS.map(([k,n])=>`<button role="tab" id="tab-${k}" aria-selected="${state.tab===k}" data-k="${k}">${n}</button>`).join("");
+}
+$("#tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;go(b.dataset.k)});
+function go(k,extra){state={...state,tab:k,...(extra||{})};renderTabs();render();window.scrollTo({top:$("nav").offsetTop,behavior:"smooth"})}
+
+function evHTML(e){const L=LAYERS[e.l]||LAYERS.dep;
+  return `<li class="ev${e.mine?" mine":""}"><time>${esc(e.d)}</time><div><h4>${esc(e.t)}</h4>${e.s?`<p>${esc(e.s)}</p>`:""}
+  <div class="meta"><span class="chip ${L.cls}">${L.name}</span><span class="chip">${esc(e.c)}</span><span class="chip conf">${esc(e.conf)}</span>
+  ${e.u?`<a class="src" href="${esc(e.u)}" target="_blank" rel="noopener">${esc(e.src)} ↗</a>`:`<span class="note">${esc(e.src||"")}</span>`}
+  ${e.mine?`<span class="chip">我添加的</span><button class="linkish" data-del="${esc(e.id)}">删除</button>`:""}</div></div></li>`}
+
+function render(){
+  const m=$("#main");const T=state.tab;
+  if(T==="overview"){
+    const ev=allEvents();
+    const counts=Object.keys(LAYERS).map(k=>[k,ev.filter(e=>e.l===k).length]);
+    m.innerHTML=`<h2>总览</h2><p class="lede">四个库围绕一条主线组织。点击任一维度，可直接查看对应事件。</p>
+    <div class="grid">${counts.map(([k,n])=>`<div class="card"><span class="k">${LAYERS[k].name}</span><div class="big">${n}</div><p>${LAYERS[k].def}</p><button class="linkish" data-layer="${k}">查看事件 →</button></div>`).join("")}</div>
+    <h2 style="margin-top:30px">最新动态</h2><p class="lede">按时间倒序的最近五条。</p><ol class="tl">${ev.slice(0,5).map(evHTML).join("")}</ol>`;
+  }
+  if(T==="timeline"){
+    const countries=[...new Set(allEvents().map(e=>e.c))].sort();
+    const list=allEvents().filter(e=>(!state.layer||e.l===state.layer)&&(!state.country||e.c===state.country)&&(!state.q||(e.t+e.s+e.c+e.src).toLowerCase().includes(state.q.toLowerCase())));
+    m.innerHTML=`<h2>大事年表库</h2><p class="lede">字段：时间、事件、主体、层级、来源、可信度。可按关键词、层级、主体筛选。</p>
+    <details class="add"><summary>添加条目（保存在本浏览器）</summary>
+      <form class="form" id="addf">
+        <label>时间<input id="f-d" required placeholder="2026-10-11"></label>
+        <label>主体<input id="f-c" required placeholder="哈萨克斯坦 / 中国"></label>
+        <label>层级<select id="f-l">${Object.entries(LAYERS).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join("")}</select></label>
+        <label>可信度<select id="f-conf"><option>已核验</option><option>组会材料</option><option>待核验</option></select></label>
+        <label class="wide">事件<input id="f-t" required placeholder="一句话写清谁做了什么"></label>
+        <label class="wide">要点<input id="f-s" placeholder="补充数字或背景"></label>
+        <label>来源名称<input id="f-src" placeholder="新华网"></label>
+        <label>来源链接<input id="f-u" type="url" placeholder="https://"></label>
+        <div class="wide bar"><button class="btn primary" type="submit">保存条目</button><span class="note">只保存在你这台设备的浏览器里。要让别人也看到，请用“导出数据”。</span></div>
+      </form></details>
+    <div class="bar">
+      <input id="q" placeholder="搜索事件、主体、来源" value="${esc(state.q)}">
+      <select id="fl"><option value="">全部层级</option>${Object.entries(LAYERS).map(([k,v])=>`<option value="${k}" ${state.layer===k?"selected":""}>${v.name}</option>`).join("")}</select>
+      <select id="fc"><option value="">全部主体</option>${countries.map(c=>`<option ${state.country===c?"selected":""}>${esc(c)}</option>`).join("")}</select>
+      <span class="count">${list.length} 条</span>
+    </div>
+    <ol class="tl">${list.map(evHTML).join("")||`<li class="note">没有匹配的条目。换个关键词或清空筛选试试。</li>`}</ol>
+    <div class="bar" style="margin-top:18px"><button class="btn" id="exp">导出数据（复制JSON）</button><button class="btn" id="impbtn">导入数据</button></div>
+    <div id="imp" hidden><textarea id="impt" class="form" style="width:100%" placeholder="把导出的JSON粘贴到这里"></textarea><div class="bar"><button class="btn primary" id="impgo">确认导入</button></div></div>`;
+    const q=$("#q");q.addEventListener("input",()=>{state.q=q.value;const p=q.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(p,p)});
+    $("#fl").onchange=e=>{state.layer=e.target.value;render()};
+    $("#fc").onchange=e=>{state.country=e.target.value;render()};
+    $("#addf").addEventListener("submit",ev=>{ev.preventDefault();
+      const x={id:"m"+Date.now(),d:$("#f-d").value.trim(),c:$("#f-c").value.trim(),l:$("#f-l").value,conf:$("#f-conf").value,t:$("#f-t").value.trim(),s:$("#f-s").value.trim(),src:$("#f-src").value.trim(),u:$("#f-u").value.trim()};
+      mine.push(x);toast(saveMine(mine)?"已保存":"已添加，但本浏览器不允许保存，刷新后会丢失");render()});
+    $("#exp").onclick=()=>{const txt=JSON.stringify(mine,null,1);
+      if(!mine.length){toast("你还没有添加条目");return}
+      (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast("已复制，可粘贴发给他人或存档"),()=>{$("#imp").hidden=false;$("#impt").value=txt;$("#impt").select();toast("请手动复制下方文本")})};
+    $("#impbtn").onclick=()=>{$("#imp").hidden=!$("#imp").hidden};
+    $("#impgo").onclick=()=>{try{const a=JSON.parse($("#impt").value);if(!Array.isArray(a))throw 0;const ids=new Set(mine.map(x=>x.id));a.forEach(x=>{if(x&&x.t&&!ids.has(x.id))mine.push(x)});saveMine(mine);toast("已导入 "+a.length+" 条");render()}catch(e){toast("格式不对：请粘贴“导出数据”得到的完整文本")}};
+  }
+  if(T==="hot"){
+    m.innerHTML=`<h2>热点追踪库</h2><p class="lede">信号强弱为 1–5 的主观判断，用于决定下次组会优先跟进哪一项。</p>
+    <div class="tablewrap"><table><thead><tr><th>议题</th><th>最新动态</th><th>各方立场</th><th>信号</th><th>下次观察节点</th></tr></thead><tbody>
+    ${HOT.map(h=>`<tr><td><b>${esc(h.k)}</b></td><td>${esc(h.now)}</td><td>${esc(h.who)}</td><td><span class="sig" aria-label="信号 ${h.sig}/5">${[1,2,3,4,5].map(i=>`<i class="${i<=h.sig?"on":""}"></i>`).join("")}</span></td><td>${esc(h.next)}</td></tr>`).join("")}
+    </tbody></table></div>`;
+  }
+  if(T==="themes"){
+    const ev=allEvents();
+    m.innerHTML=`<h2>主题库</h2><p class="lede">四个标签交叉索引全部事件。前三项是全球南方面临的数字困境，第四项是突围路径。</p>
+    <div class="grid">${Object.entries(LAYERS).map(([k,v])=>`<div class="card"><span class="chip ${v.cls}" style="align-self:flex-start">${v.name}</span>
+    <p><b>理论视角</b>　${v.theory}</p><p>${v.def}</p><p class="note">追问：${v.q}</p>
+    <p class="note">代表事件：${ev.filter(e=>e.l===k).slice(0,2).map(e=>esc(e.t)).join("；")||"暂无"}</p>
+    <button class="linkish" data-layer="${k}">查看全部 ${ev.filter(e=>e.l===k).length} 条 →</button></div>`).join("")}</div>
+    <div class="card" style="margin-top:16px"><span class="k">突围路径（由易到难）</span><p><b>对冲</b>：双栈并接，避免锁定 → <b>制度化</b>：把对冲变成席位 → <b>区域协同</b>：以小多边放大议价 → <b>语义主权</b>：掌握语言、课程与数据。</p></div>`;
+  }
+  if(T==="past"){
+    m.innerHTML=`<h2>既有分析库</h2><p class="lede">历次组会战略态势环节提出的概念和判断。每条附“事后验证”，让概念接受时间检验。</p>
+    <div class="grid">${PAST.map(p=>`<div class="card"><span class="k">${p.d} · ${esc(p.topic)}</span><h3>${esc(p.concept)}</h3><p>${esc(p.judge)}</p>
+    <span class="verdict v-${p.v}">${p.vn}</span>${p.why?`<p class="note">${esc(p.why)}</p>`:""}</div>`).join("")}</div>`;
+  }
+  if(T==="three"){
+    m.innerHTML=`<h2>三体文构思</h2><p class="lede">同一个切口，产出学术文、政策文、社会文。三篇共用年表库与热点库的事实。</p>
+    <div class="grid">${THREE.map(x=>`<div class="card"><span class="chip ${x.cls}" style="align-self:flex-start">${x.type}</span><h3>${esc(x.title)}</h3><p>${esc(x.arg)}</p>
+    <p class="note"><b>当前阶段</b>　${esc(x.stage)}</p><p class="note"><b>下一步</b>　${esc(x.next)}</p></div>`).join("")}</div>`;
+  }
+}
+$("#main").addEventListener("click",e=>{
+  const b=e.target.closest("[data-layer]");if(b){go("timeline",{layer:b.dataset.layer,q:"",country:""});return}
+  const d=e.target.closest("[data-del]");if(d){mine=mine.filter(x=>x.id!==d.dataset.del);saveMine(mine);toast("已删除");render()}
+});
+renderTabs();render();
+</script>
+
+</body>
+</html>
